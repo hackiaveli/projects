@@ -1,0 +1,84 @@
+
+
+	protected RGB[] originalPic;
+	protected RGB[] gaussPic;
+	protected int picWid;
+	protected int picHite;
+	protected int low;
+	protected int hi;
+	protected double gFilter[][];
+	protected double sigma;
+	protected int radius;
+
+	public static int findCol(int width,int pixIndex)
+	{
+
+		if(width>pixIndex)
+		{
+			return pixIndex;
+		}
+		else
+		{
+			return findCol(width,pixIndex-width);
+		}
+	}
+
+	public static int findRow(int width,int pixIndex)
+	{
+		int answer=0;
+
+		while(width<=pixIndex)
+		{
+			answer+=width;
+			pixIndex-=width;
+		}
+		return answer/width;
+	}
+
+
+
+public int SEQUENTIAL_CUTOFF = 10000;
+
+
+CalculateGauss(int low,int hi,int picHite,int picWid,RGB[] originalPic,RGB[] gaussPic,double sigma,int radius)
+{
+	this.low=low;
+	this.hi=hi;
+	this.picHite=picHite;
+	this.picWid=picWid;
+	this.originalPic=originalPic;
+	this.gaussPic=gaussPic;
+	this.radius=radius;
+	this.sigma=sigma;
+	this.gFilter=Gaussian.gaussianFilter(radius, sigma);
+}
+
+public RGB [] compute()
+{
+
+	if((high - low) < SEQUENTIAL_CUTOFF)
+	{
+
+
+	}
+	else
+	{
+ 		int mid=(low+hi)/2;
+    	CalculateGauss calc1=new CalculateGauss(low,mid,picHite,picWid,originalPic,gaussPic,sigma,radius);
+    	CalculateGauss calc2=new CalculateGauss(mid,hi,picHite,picWid,originalPic,gaussPic,sigma,radius);
+    	calc1.fork();
+    	calc2.compute();
+    	calc1.join();
+	}
+	return this.gaussPic;
+}
+
+
+
+
+
+
+
+
+
+
