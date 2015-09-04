@@ -1,0 +1,3 @@
+TO RUN: first run make, then either make your own test script and provide as the argument by running ./timetrash “name_script.sh” or you can use the simple one provided called test.sh for sample execution of many simple commands
+
+works for most commands, when using redirect, see test.sh for correct syntax, it should be in the form of ls>file.txt without spaces
