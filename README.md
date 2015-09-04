@@ -1,4 +1,4 @@
-# schoolWork
+# projects
 Projects done in various languages
 
 C 
