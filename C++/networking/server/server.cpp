@@ -84,7 +84,9 @@ int main(int argc, char *argv[])
 	
     sockfd = socket(AF_INET, SOCK_STREAM, 0); //open the socket
     if (sockfd < 0)
-        error("ERROR opening socket");
+    {
+        error((char*)"ERROR opening socket");
+    }
     bzero((char *) &serv_addr, sizeof(serv_addr));
 
 
@@ -115,17 +117,17 @@ int main(int argc, char *argv[])
         newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen); //accept an incoming request
         
         if (newsockfd < 0)
-            error("ERROR on accept");
+             error((char*)"ERROR on accept");
         
         pid = fork(); //create a new process
         if (pid < 0)
-            error("ERROR on fork");
+             error((char*)"ERROR on fork");
         
         if (pid == 0)  { // fork() returns a value of 0 to the child process
             close(sockfd);
             
 	
-std::cout << "Request! The request received was: " << std::endl;
+    std::cout << "Request! The request received was: " << std::endl;
 	//dump the request to the consol
 	//this is what the client requests of us
 	std::cout << " " << std::endl;
@@ -164,7 +166,7 @@ std::string readReq (int sock)
     
     std::string tester(buffer);
     
-    if (n < 0) error("ERROR reading from socket");
+    if (n < 0)  error((char*)"ERROR reading from socket");
    
     return tester;
 }
@@ -193,8 +195,6 @@ std::string parseFileName(std::string firstLineString)
     std::string fileName;
     
     fileName = fileNameCstring;
-    
-    
     
     //default file name is index.html 
     if( !(strcmp("/", fileNameCstring)))
@@ -299,18 +299,25 @@ ifs.open( file.c_str(), std::ifstream::in | std::ios::binary);
 	int n = 1;
 	//std:: cout << array;
 	int r = 0;
-	while(n<contentLength)
-	{
-	 r = send(sockfd,array,n,0);
-	array+=r;
-	n+=r;
+    int cutOff=0;
+    while(n<contentLength)
+    { 
+        r = send(sockfd,reqToServ.c_str(),reqToServ.length(),0);
+        if(r>reqToServ.length())
+        {
+            cutOff=0;
+        }
+        else
+            cutOff=r;
+        reqToServ = reqToServ.substr(cutOff,reqToServ.length());
+        if(reqToServ.empty())
+            break;
+        n+=r;
+    }
 
-	}
 	//write out the whole file to the clients FD
 	//the problem here was with the large files but since my method sends a bit of the file at a time it ends up working great
-	
   
-    
     return ""; //i originally had this return a string so that later on if we are gonna use this server we can add a lil more info about the request being served
 	//as of now it just returns "" 
 }
