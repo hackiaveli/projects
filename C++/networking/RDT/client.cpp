@@ -264,7 +264,8 @@ int main (int argc, char *argv[]){
         my_connection->requestFile(filename); 
         
         string file = my_connection->waitForData();
-        cout << file;
+        ofstream outputFile("dataTransfered.txt");
+        outputFile << file;
         
         my_connection->closeConnection(true);
         return 0;
