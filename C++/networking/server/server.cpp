@@ -47,30 +47,20 @@ void error(char *msg)
     perror(msg);
     exit(1);
 }
-
 int main(int argc, char *argv[])
 {
     int sockfd, newsockfd, portno, pid;
     socklen_t clilen;
     struct sockaddr_in serv_addr, cli_addr;
-    struct sigaction sa;          // for signal SIGCHLD
+    struct sigaction sa;          
     
     if (argc < 2) {
-        // fprintf(stderr,"ERROR, no port provided\n");
-
-
-
 	portno = 2222; 	 //if no argument is provided pass 2222 as default port
-        //exit(1);
-
     }
 
     else
     portno=atoi(argv[1]); //otherwise take the argument as the port
   
-
-
-//print welcome message
 	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
@@ -112,7 +102,7 @@ int main(int argc, char *argv[])
     /*********************************/
     
 
-//this loop is the server beginning to listen now on portno 
+    //this loop is the server beginning to listen now on portno 
     while (1) {
         newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen); //accept an incoming request
         
@@ -127,24 +117,21 @@ int main(int argc, char *argv[])
             close(sockfd);
             
 	
-    std::cout << "Request! The request received was: " << std::endl;
-	//dump the request to the consol
-	//this is what the client requests of us
-	std::cout << " " << std::endl;
-	std::string requested = readReq(newsockfd);
-	std::cout << requested << std::endl;
-	std::cout << " " << std::endl;
-	std::cout << " " << std::endl;
+        std::cout << "Request! The request received was: " << std::endl;
+    	//dump the request to the consol
+    	//this is what the client requests of us
+    	std::cout << " " << std::endl;
+    	std::string requested = readReq(newsockfd);
+    	std::cout << requested << std::endl;
+    	std::cout << " " << std::endl;
+    	std::cout << " " << std::endl;
 	
 	//take the request and snip out the first line
             std::string firstLine = parseFirstLine(requested);
-//then snip out the entire file name only
-            std::string fileName = parseFileName(firstLine);
-            
+    //then snip out the entire file name only
+            std::string fileName = parseFileName(firstLine);    
 	//finally serve the request
             std::string request = serveReq(fileName,newsockfd);
-            
- 
             close(newsockfd);
              //clean up and exit
             exit(0);
@@ -187,11 +174,10 @@ std::string parseFileName(std::string firstLineString)
     char* firstLine = new char[firstLineString.size() + 1];
     bzero((char*)firstLine, firstLineString.size()+1);
     strncpy(firstLine, firstLineString.c_str(), firstLineString.size());
-    
-    
+
     char *command = strtok( firstLine, " " );
     char *fileNameCstring = strtok( NULL, " " );
-    
+
     std::string fileName;
     
     fileName = fileNameCstring;
@@ -327,23 +313,20 @@ std::string getContentType(std::string file)
     //standard html and text files
     if(file.find(".html") != std::string::npos)
 		return "text/html";
-	if(file.find(".txt") != std::string::npos)
+	else if(file.find(".txt") != std::string::npos)
 		return "text/plain";
-    
-    //SPEC SAYS
     //Add in the support for GIF and JPEG images.
-    if(file.find(".gif") != std::string::npos)
+    else if(file.find(".gif") != std::string::npos)
 		return "image/gif";
-    if(file.find(".GIF") != std::string::npos)
-        return "image/gif";
-    
-	if(file.find(".jpg") != std::string::npos)
+    else if(file.find(".GIF") != std::string::npos)
+        return "image/gif";    
+	else if(file.find(".jpg") != std::string::npos)
         return "image/jpeg";
-    if(file.find(".jpeg") != std::string::npos)
+    else if(file.find(".jpeg") != std::string::npos)
 		return "image/jpeg";
-    if(file.find(".JPG") != std::string::npos)
+    else if(file.find(".JPG") != std::string::npos)
 		return "image/jpeg";
-    if(file.find(".JPEG") != std::string::npos)
+    else if(file.find(".JPEG") != std::string::npos)
 		return "image/jpeg";
     
     return "text/html"; //if its none of these we will make the assumption it is text/html file but this can be changed to preference
